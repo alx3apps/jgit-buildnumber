@@ -4,10 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.concerteza.util</groupId>
-    <artifactId>maven-jgit-buildnumber-plugin</artifactId>
+    <artifactId>jgit-buildnumber-parent</artifactId>
     <version>1.0</version>
-    <packaging>maven-plugin</packaging>
-    <name>Maven JGit Build Number Plugin</name>
+    <packaging>pom</packaging>
+    <name>JGit Build Number Plugins For Maven And Ant</name>
+
+    <modules>
+        <module>maven-jgit-buildnumber-plugin</module>
+        <module>jgit-buildnumber-ant-task</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,21 +26,7 @@
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>org.eclipse.jgit</groupId>
-            <artifactId>org.eclipse.jgit</artifactId>
-            <version>1.1.0.201109151100-r</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-plugin-api</artifactId>
-            <version>3.0.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-core</artifactId>
-            <version>3.0.3</version>
-        </dependency>
+
     </dependencies>
 
 </project>
