@@ -58,7 +58,15 @@ public class BuildNumberExtractor {
         Map<String, Ref> refMap = repo.getTags();
         Map<String, String> res = new HashMap<String, String>(refMap.size());
         for (Map.Entry<String, Ref> en : refMap.entrySet()) {
-            res.put(en.getValue().getObjectId().name(), en.getKey());
+            String sha1 = en.getValue().getObjectId().name();
+            String existed = res.get(sha1);
+            String value;
+            if (null == existed) {
+                value = en.getKey();
+            } else {
+                value = existed + ";" + en.getKey();
+            }
+            res.put(sha1, value);
         }
         return res;
     }

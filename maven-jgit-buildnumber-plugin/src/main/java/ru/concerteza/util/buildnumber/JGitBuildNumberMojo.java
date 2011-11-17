@@ -12,12 +12,13 @@ import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Goal which creates build number.
  *
  * @goal extract-buildnumber
- * @phase validate
+ * @phase prepare-package
  */
 public class JGitBuildNumberMojo extends AbstractMojo {
     /**
@@ -63,6 +64,13 @@ public class JGitBuildNumberMojo extends AbstractMojo {
      * @readonly
      */
     private MavenProject project;
+     /**
+     * The maven parent project.
+     *
+     * @parameter expression="${project.parent}"
+     * @readonly
+     */
+    private MavenProject parentProject;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -70,13 +78,26 @@ public class JGitBuildNumberMojo extends AbstractMojo {
             // executes only one per build
             // http://www.sonatype.com/people/2009/05/how-to-make-a-plugin-run-once-during-a-build/
             if (executionRootDirectory.equals(baseDirectory)) {
+                // build started from this projects root
                 BuildNumber bn = BuildNumberExtractor.extract();
                 getLog().info("Git info extracted, revision: '" + bn.getRevision() + "', branch: '" + bn.getBranch() +
                         "', tag: '" + bn.getTag() + "', commitsCount: '" + bn.getCommitsCount() + "'");
-                project.getProperties().setProperty(revisionProperty, bn.getRevision());
-                project.getProperties().setProperty(branchProperty, bn.getBranch());
-                project.getProperties().setProperty(tagProperty, bn.getTag());
-                project.getProperties().setProperty(commitsCountProperty, bn.getCommitsCountAsString());
+                Properties props = project.getProperties();
+                props.setProperty(revisionProperty, bn.getRevision());
+                props.setProperty(branchProperty, bn.getBranch());
+                props.setProperty(tagProperty, bn.getTag());
+                props.setProperty(commitsCountProperty, bn.getCommitsCountAsString());
+            } else if("pom".equals(parentProject.getPackaging())) {
+                // build started from parent, we are in subproject, lets provide parent properties to our project
+                Properties parentProps = parentProject.getProperties();
+                Properties props = project.getProperties();
+                props.setProperty(revisionProperty, parentProps.getProperty(revisionProperty));
+                props.setProperty(branchProperty, parentProps.getProperty(branchProperty));
+                props.setProperty(tagProperty, parentProps.getProperty(tagProperty));
+                props.setProperty(commitsCountProperty, parentProps.getProperty(commitsCountProperty));
+            } else {
+                // should not happen
+                getLog().warn("Cannot extract JGit version: something wrong with build process, we're not in parent, not in subproject!");
             }
         } catch (IOException e) {
             throw new MojoFailureException(e.getMessage(), e);

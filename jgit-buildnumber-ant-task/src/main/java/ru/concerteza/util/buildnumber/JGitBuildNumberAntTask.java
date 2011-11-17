@@ -24,6 +24,4 @@ public class JGitBuildNumberAntTask {
         project.setProperty("git.tag", bn.getTag());
         project.setProperty("git.commitsCount", bn.getCommitsCountAsString());
     }
-
-
 }
