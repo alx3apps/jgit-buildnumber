@@ -74,6 +74,7 @@ public class JGitBuildNumberMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        Properties props = project.getProperties();
         try {
             // executes only one per build
             // http://www.sonatype.com/people/2009/05/how-to-make-a-plugin-run-once-during-a-build/
@@ -82,7 +83,6 @@ public class JGitBuildNumberMojo extends AbstractMojo {
                 BuildNumber bn = BuildNumberExtractor.extract();
                 getLog().info("Git info extracted, revision: '" + bn.getRevision() + "', branch: '" + bn.getBranch() +
                         "', tag: '" + bn.getTag() + "', commitsCount: '" + bn.getCommitsCount() + "'");
-                Properties props = project.getProperties();
                 props.setProperty(revisionProperty, bn.getRevision());
                 props.setProperty(branchProperty, bn.getBranch());
                 props.setProperty(tagProperty, bn.getTag());
@@ -90,7 +90,6 @@ public class JGitBuildNumberMojo extends AbstractMojo {
             } else if("pom".equals(parentProject.getPackaging())) {
                 // build started from parent, we are in subproject, lets provide parent properties to our project
                 Properties parentProps = parentProject.getProperties();
-                Properties props = project.getProperties();
                 props.setProperty(revisionProperty, parentProps.getProperty(revisionProperty));
                 props.setProperty(branchProperty, parentProps.getProperty(branchProperty));
                 props.setProperty(tagProperty, parentProps.getProperty(tagProperty));
@@ -98,9 +97,18 @@ public class JGitBuildNumberMojo extends AbstractMojo {
             } else {
                 // should not happen
                 getLog().warn("Cannot extract JGit version: something wrong with build process, we're not in parent, not in subproject!");
+                fillPropsUnknown(props);
             }
-        } catch (IOException e) {
-            throw new MojoFailureException(e.getMessage(), e);
+        } catch (Exception e) {
+            getLog().error(e);
+            fillPropsUnknown(props);
         }
+    }
+
+    private void fillPropsUnknown(Properties props) {
+        props.setProperty(revisionProperty, "UNKNOWN_REVISION");
+        props.setProperty(branchProperty, "UNKNOWN_BRANCH");
+        props.setProperty(tagProperty, "UNKNOWN_TAG");
+        props.setProperty(commitsCountProperty, "-1");
     }
 }
