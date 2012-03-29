@@ -11,6 +11,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -44,18 +45,6 @@ public class JGitBuildNumberMojo extends AbstractMojo {
      * @parameter expression="${commitsCountProperty}"
      */
     private String commitsCountProperty = "git.commitsCount";
-    /**
-     * Build timestamp property name
-     *
-     * @parameter expression="${buildTimestampProperty}"
-     */
-    private String buildTimestampProperty = "build.timestamp";
-    /**
-     * Build timestamp format (SimpleDateFormat pattern)
-     *
-     * @parameter expression="${buildTimestampFormat}"
-     */
-    private String buildTimestampFormat = BuildTimestampFactory.DEFAULT_BUILD_TIMESTAMP_FORMAT;
     /**
      * @parameter expression="${project.basedir}"
      * @required
@@ -98,7 +87,6 @@ public class JGitBuildNumberMojo extends AbstractMojo {
                 props.setProperty(branchProperty, bn.getBranch());
                 props.setProperty(tagProperty, bn.getTag());
                 props.setProperty(commitsCountProperty, bn.getCommitsCountAsString());
-                props.setProperty(buildTimestampProperty, BuildTimestampFactory.createBuildTimestamp(buildTimestampFormat));
             } else if("pom".equals(parentProject.getPackaging())) {
                 // build started from parent, we are in subproject, lets provide parent properties to our project
                 Properties parentProps = parentProject.getProperties();
@@ -106,7 +94,6 @@ public class JGitBuildNumberMojo extends AbstractMojo {
                 props.setProperty(branchProperty, parentProps.getProperty(branchProperty));
                 props.setProperty(tagProperty, parentProps.getProperty(tagProperty));
                 props.setProperty(commitsCountProperty, parentProps.getProperty(commitsCountProperty));
-                props.setProperty(buildTimestampProperty, parentProps.getProperty(buildTimestampProperty));
             } else {
                 // should not happen
                 getLog().warn("Cannot extract JGit version: something wrong with build process, we're not in parent, not in subproject!");
@@ -123,6 +110,5 @@ public class JGitBuildNumberMojo extends AbstractMojo {
         props.setProperty(branchProperty, "UNKNOWN_BRANCH");
         props.setProperty(tagProperty, "UNKNOWN_TAG");
         props.setProperty(commitsCountProperty, "-1");
-        props.setProperty(buildTimestampProperty, "UNKNOWN_BUILD_TIMESTAMP");
     }
 }
