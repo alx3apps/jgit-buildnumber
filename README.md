@@ -3,7 +3,7 @@ Git buildnumber plugin for Maven and Ant based on JGit
 
 Allows to get git buildnumbers, while building java projects, in pure Java without Git command-line tool.
 
-Note: maven already have ubiquitous buildnumber plugin - http://mojo.codehaus.org/buildnumber-maven-plugin/ , this project is NIH substitute for it with Git support only.
+Note: maven already have ubiquitous [buildnumber-maven-plugin](http://mojo.codehaus.org/buildnumber-maven-plugin/) , this project is NIH substitute for it with Git support only.
 
 Build number
 ------------
@@ -25,7 +25,7 @@ __Build__ __incremental__ __id__: commits count in this branch
 
     git rev-list --all | wc -l
 
-This project __IS__ __NOT__ using Git CLI commands above, it is using pure java JGit (http://www.jgit.org/) API instead.
+This project __IS__ __NOT__ using Git CLI commands above, it is using pure java [JGit](http://www.jgit.org/) API instead.
 
 Plugin building
 ---------------
@@ -47,7 +47,7 @@ Plugin config example:
     <plugin>
         <groupId>ru.concerteza.buildnumber</groupId>
         <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.1</version>
+        <version>1.1.1</version>
         <executions>
             <execution>
                 <id>git-buildnumber</id>
@@ -112,7 +112,7 @@ To use buildnumber ant tasks you need this jars on your classpath (this is maven
     <dependency>
         <groupId>org.eclipse.jgit</groupId>
         <artifactId>org.eclipse.jgit</artifactId>
-        <version>1.1.0.201109151100-r</version>
+        <version>1.3.0.201202151440-r</version>
     </dependency>
 
 build.xml usage snippet:
@@ -127,4 +127,4 @@ build.xml usage snippet:
 License information
 -------------------
 
-You can use any code from this project under terms of Apache Licence (http://www.apache.org/licenses/LICENSE-2.0)
+You can use any code from this project under terms of [Apache License](http://www.apache.org/licenses/LICENSE-2.0).
