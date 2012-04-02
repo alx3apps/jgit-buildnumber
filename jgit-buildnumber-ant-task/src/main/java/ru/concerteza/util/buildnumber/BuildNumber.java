@@ -48,6 +48,14 @@ public class BuildNumber {
         return Integer.toString(commitsCount);
     }
 
+    public String defaultBuildnumber() {
+        final String name;
+        if(tag.length() > 0) name = tag;
+        else if(branch.length() > 0) name = branch;
+        else name = "UNNAMED";
+        return String.format("%s.%d.%s", name, commitsCount, getShortRevision());
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();

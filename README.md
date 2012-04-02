@@ -19,13 +19,18 @@ __Human__ __readable__ __id__: tag name or branch name
 
 __Globally__ __unique__ __id__: commit sha1
 
-    git rev-parse --short HEAD 
+    git rev-parse HEAD # revision
+    git rev-parse --short HEAD # short revision
 
 __Build__ __incremental__ __id__: commits count in this branch
 
     git rev-list --all | wc -l
 
-This project __IS__ __NOT__ using Git CLI commands above, it is using pure java [JGit](http://www.jgit.org/) API instead.
+This plugin will extract parameters above and expose them as Maven or Ant properties.
+It does __NOT__ use Git CLI commands above, it uses pure java [JGit](http://www.jgit.org/) API instead.
+
+*Note: result properties won't coinside exactly with output git CLI commands above,
+there are differences in not taking into account checkouted tag or not, and commits are counted form HEAD to root without branches*
 
 Plugin building
 ---------------
@@ -41,13 +46,18 @@ Usage in Maven 3
 
 Note: this plugin accesses Git repo only once during multi-module build.
 
-Plugin config example:
+###Store raw buildnumber parts in MANIFEST.MF file
+
+In this case extracted buildnumber parts are stored in manifest as is, read from there on startup ([example](https://github.com/alx3apps/ctz-utils/blob/master/src/main/java/ru/concerteza/util/version/CtzVersionUtils.java))
+and composed into buildnumber.
+
+Plugin config:
 
     <!-- enable JGit plugin -->
     <plugin>
         <groupId>ru.concerteza.buildnumber</groupId>
         <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.1.1</version>
+        <version>1.2</version>
         <executions>
             <execution>
                 <id>git-buildnumber</id>
@@ -92,28 +102,67 @@ Results exmple (from MANIFEST.MF):
     X-Git-Commits-Count: 30
     X-Git-Tag: 1.3.7
 
-Maven properties names can be configured:
+###Create ready to use buildnumber
 
- * revisionProperty, default: git.revision
- * branchProperty, default: git.branch
- * tagProperty, default: git.tag
- * commitsCountProperty, default: git.commitsCount
+Plugin may be configured to produce ready-to-use buildnumber into `git.buildnumber` property.
+By default buildnumber created as `<tag or branch>.<commitsCount>.<shortRevision>`.
+
+Plugin also support custom buildnumber composition using JavaScript. This feature were added by [plevart](https://github.com/plevart).
+
+JS snippet can be provided to `javaScriptBuildnumberCallback` configuration property. Snippet will be executed
+by [Rhino JS engine](http://www.mozilla.org/rhino/) included with JDK6.
+
+Configuration example:
+
+    <plugin>
+        <groupId>ru.concerteza.buildnumber</groupId>
+        <artifactId>maven-jgit-buildnumber-plugin</artifactId>
+        <version>1.2</version>
+        <executions>
+            <execution>
+                <id>git-buildnumber</id>
+                <goals>
+                    <goal>extract-buildnumber</goal>
+                </goals>
+                <phase>prepare-package</phase>
+                <configuration>
+                    <javaScriptBuildnumberCallback>
+                        tag + "_" + branch + "_" + revision.substring(10, 20) + "_" + shortRevision + "_" + commitsCount*42
+                    </javaScriptBuildnumberCallback>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
+
+`tag`, `branch`, `revision`, `shortRevision` and `commitsCount` are exposed to JavaScript as global variables (`commitsCount` as numeric).
+
+Script engine is initialized only if `javaScriptBuildnumberCallback` is provided so it won't break cross-platform support.
+
+If JS snippet failed to execute, it won't break build process, Rhino error will be printed to Maven output and all properties will get "UNKNOWN" values.
+
+###Maven NBillingAbonentsResultFillerImpl configuration:
+
+ * revisionProperty, default: __git.revision__
+ * branchProperty, default: __git.branch__
+ * tagProperty, default: __git.tag__
+ * commitsCountProperty, default: __git.commitsCount__
+ * buildnumberProperty, default: __git.buildnumber__
 
 Usage in Ant
 ------------
 
-To use buildnumber ant tasks you need this jars on your classpath (this is maven's JAR descriptions - not an ant config):
+To use buildnumber ant task you need this jars on your classpath:
 
-    <dependency>
-        <groupId>ru.concerteza.buildnumber</groupId>
-        <artifactId>jgit-buildnumber-ant-task</artifactId>
-        <version>1.1</version>
-    </dependency>
-    <dependency>
-        <groupId>org.eclipse.jgit</groupId>
-        <artifactId>org.eclipse.jgit</artifactId>
-        <version>1.3.0.201202151440-r</version>
-    </dependency>
+ - `jgit-buildnumber-ant-task-1.2.jar`
+ - `org.eclipse.jgit-1.3.0.201202151440-r.jar`
+
+Extracted properties are put into:
+
+ - git.tag
+ - git.branch
+ - git.revision
+ - git.shortRevision
+ - git.commitsCount
 
 build.xml usage snippet:
 
@@ -127,4 +176,4 @@ build.xml usage snippet:
 License information
 -------------------
 
-You can use any code from this project under terms of [Apache License](http://www.apache.org/licenses/LICENSE-2.0).
+You can use any code from this project under terms of [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).

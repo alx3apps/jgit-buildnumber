@@ -10,8 +10,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import java.io.File;
-import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -45,6 +47,18 @@ public class JGitBuildNumberMojo extends AbstractMojo {
      * @parameter expression="${commitsCountProperty}"
      */
     private String commitsCountProperty = "git.commitsCount";
+    /**
+     * Buildnumber property name
+     *
+     * @parameter expression="${buildnumberProperty}"
+     */
+    private String buildnumberProperty = "git.buildnumber";
+    /**
+     * Java Script buildnumber callback
+     *
+     * @parameter expression="${javaScriptBuildnumberCallback}"
+     */
+    private String javaScriptBuildnumberCallback = null;
     /**
      * @parameter expression="${project.basedir}"
      * @required
@@ -87,6 +101,9 @@ public class JGitBuildNumberMojo extends AbstractMojo {
                 props.setProperty(branchProperty, bn.getBranch());
                 props.setProperty(tagProperty, bn.getTag());
                 props.setProperty(commitsCountProperty, bn.getCommitsCountAsString());
+                // create composite buildnumber
+                String composite = createBuildnumber(bn);
+                props.setProperty(buildnumberProperty, composite);
             } else if("pom".equals(parentProject.getPackaging())) {
                 // build started from parent, we are in subproject, lets provide parent properties to our project
                 Properties parentProps = parentProject.getProperties();
@@ -94,6 +111,7 @@ public class JGitBuildNumberMojo extends AbstractMojo {
                 props.setProperty(branchProperty, parentProps.getProperty(branchProperty));
                 props.setProperty(tagProperty, parentProps.getProperty(tagProperty));
                 props.setProperty(commitsCountProperty, parentProps.getProperty(commitsCountProperty));
+                props.setProperty(buildnumberProperty, parentProps.getProperty(buildnumberProperty));
             } else {
                 // should not happen
                 getLog().warn("Cannot extract JGit version: something wrong with build process, we're not in parent, not in subproject!");
@@ -110,5 +128,23 @@ public class JGitBuildNumberMojo extends AbstractMojo {
         props.setProperty(branchProperty, "UNKNOWN_BRANCH");
         props.setProperty(tagProperty, "UNKNOWN_TAG");
         props.setProperty(commitsCountProperty, "-1");
+        props.setProperty(buildnumberProperty, "UNKNOWN_BUILDNUMBER");
+    }
+
+    private String createBuildnumber(BuildNumber bn) throws ScriptException {
+        if(null != javaScriptBuildnumberCallback) return buildnumberFromJS(bn);
+        return bn.defaultBuildnumber();
+    }
+
+    private String buildnumberFromJS(BuildNumber bn) throws ScriptException {
+        ScriptEngine jsEngine = new ScriptEngineManager().getEngineByName("JavaScript");
+        jsEngine.put("tag", bn.getTag());
+        jsEngine.put("branch", bn.getBranch());
+        jsEngine.put("revision", bn.getRevision());
+        jsEngine.put("shortRevision", bn.getShortRevision());
+        jsEngine.put("commitsCount", bn.getCommitsCount());
+        Object res = jsEngine.eval(javaScriptBuildnumberCallback);
+        if(null == res) throw new IllegalStateException("JS buildnumber callback returns null");
+        return res.toString();
     }
 }
