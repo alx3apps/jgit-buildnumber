@@ -95,8 +95,6 @@ public class JGitBuildNumberMojo extends AbstractMojo {
             if (executionRootDirectory.equals(baseDirectory)) {
                 // build started from this projects root
                 BuildNumber bn = BuildNumberExtractor.extract();
-                getLog().info("Git info extracted, revision: '" + bn.getRevision() + "', branch: '" + bn.getBranch() +
-                        "', tag: '" + bn.getTag() + "', commitsCount: '" + bn.getCommitsCount() + "'");
                 props.setProperty(revisionProperty, bn.getRevision());
                 props.setProperty(branchProperty, bn.getBranch());
                 props.setProperty(tagProperty, bn.getTag());
@@ -104,6 +102,8 @@ public class JGitBuildNumberMojo extends AbstractMojo {
                 // create composite buildnumber
                 String composite = createBuildnumber(bn);
                 props.setProperty(buildnumberProperty, composite);
+                getLog().info("Git info extracted, revision: '" + bn.getShortRevision() + "', branch: '" + bn.getBranch() +
+                        "', tag: '" + bn.getTag() + "', commitsCount: '" + bn.getCommitsCount() + "', buildnumber: '" + composite + "'");
             } else if("pom".equals(parentProject.getPackaging())) {
                 // build started from parent, we are in subproject, lets provide parent properties to our project
                 Properties parentProps = parentProject.getProperties();

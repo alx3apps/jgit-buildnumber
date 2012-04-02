@@ -29,7 +29,7 @@ __Build__ __incremental__ __id__: commits count in this branch
 This plugin will extract parameters above and expose them as Maven or Ant properties.
 It does __NOT__ use Git CLI commands above, it uses pure java [JGit](http://www.jgit.org/) API instead.
 
-*Note: result properties won't coinside exactly with output git CLI commands above,
+*Note: result properties won't coinside exactly with output of git CLI commands above,
 there are differences in not taking into account checkouted tag or not, and commits are counted form HEAD to root without branches*
 
 Plugin building
@@ -140,13 +140,13 @@ Script engine is initialized only if `javaScriptBuildnumberCallback` is provided
 
 If JS snippet failed to execute, it won't break build process, Rhino error will be printed to Maven output and all properties will get "UNKNOWN" values.
 
-###Maven NBillingAbonentsResultFillerImpl configuration:
+###Maven properties configuration:
 
- * revisionProperty, default: __git.revision__
- * branchProperty, default: __git.branch__
- * tagProperty, default: __git.tag__
- * commitsCountProperty, default: __git.commitsCount__
- * buildnumberProperty, default: __git.buildnumber__
+ * `revisionProperty`, default: `git.revision`
+ * `branchProperty`, default: `git.branch`
+ * `tagProperty`, default: `git.tag`
+ * `commitsCountProperty`, default: `git.commitsCount`
+ * `buildnumberProperty`, default: `git.buildnumber`
 
 Usage in Ant
 ------------
@@ -158,11 +158,11 @@ To use buildnumber ant task you need this jars on your classpath:
 
 Extracted properties are put into:
 
- - git.tag
- - git.branch
- - git.revision
- - git.shortRevision
- - git.commitsCount
+ - `git.tag`
+ - `git.branch`
+ - `git.revision`
+ - `git.shortRevision`
+ - `git.commitsCount`
 
 build.xml usage snippet:
 
