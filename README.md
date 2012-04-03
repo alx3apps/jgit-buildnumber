@@ -57,7 +57,7 @@ Plugin config:
     <plugin>
         <groupId>ru.concerteza.buildnumber</groupId>
         <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.2</version>
+        <version>1.2.1</version>
         <executions>
             <execution>
                 <id>git-buildnumber</id>
@@ -117,7 +117,7 @@ Configuration example:
     <plugin>
         <groupId>ru.concerteza.buildnumber</groupId>
         <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.2</version>
+        <version>1.2.1</version>
         <executions>
             <execution>
                 <id>git-buildnumber</id>
@@ -153,7 +153,7 @@ Usage in Ant
 
 To use buildnumber ant task you need this jars on your classpath:
 
- - `jgit-buildnumber-ant-task-1.2.jar`
+ - `jgit-buildnumber-ant-task-1.2.1.jar`
  - `org.eclipse.jgit-1.3.0.201202151440-r.jar`
 
 Extracted properties are put into:
@@ -166,11 +166,26 @@ Extracted properties are put into:
 
 build.xml usage snippet:
 
-    <!-- jgit buildnumber target -->
-    <target name="git-revision" description="Store git buildnumber 'git.revision', 'git.shortRevision', 'git.branch', 'git.tag' and 'git.commitsCount' properties">
+    <target name="git-revision">
         <taskdef name="jgit-buildnumber" classname="ru.concerteza.util.buildnumber.JGitBuildNumberAntTask" classpathref="lib.static.classpath"/>
         <jgit-buildnumber/>
         <echo>Git version extracted ${git.commitsCount} (${git.shortRevision})</echo>
+    </target>
+
+###Ready to use buildnumber
+
+Default buildnumber in form `<tag or branch>.<commitsCount>.<shortRevision>` will be put into property `git.buildnumber`.
+If you want to customize it, you can use Ant [Script task](http://ant.apache.org/manual/Tasks/script.html) like this:
+
+    <target name="git-revision">
+        <taskdef name="jgit-buildnumber" classname="ru.concerteza.util.buildnumber.JGitBuildNumberAntTask" classpathref="lib.static.classpath"/>
+        <jgit-buildnumber/>
+        <script language="javascript">
+            var tag = project.getProperty("git.tag")
+            var revision = project.getProperty("git.shortRevision")
+            var buildnumber = tag + "_" + revision
+            project.setProperty("git.buildnumber", buildnumber)
+        </script>
     </target>
 
 License information

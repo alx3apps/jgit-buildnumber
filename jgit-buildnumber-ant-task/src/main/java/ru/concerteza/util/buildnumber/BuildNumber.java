@@ -25,7 +25,7 @@ public class BuildNumber {
     // git rev-parse --short HEAD
     public String getShortRevision() {
         if(null == revision) return null;
-        if(revision.length() > 7) return revision.substring(0, 6);
+        if(revision.length() > 7) return revision.substring(0, 7);
         return revision;
     }
 
