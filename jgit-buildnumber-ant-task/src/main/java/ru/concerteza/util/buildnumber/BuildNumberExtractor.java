@@ -13,15 +13,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * User: alexey
+ * Extracts buildnumber fields from git repository. Put it here, not in common module, because we don't want
+ * any ant task dependencies except jgit and ant
+ *
+ * @author alexey
  * Date: 11/16/11
+ * @see BuildNumber
  */
 
-// put it here, not in common module, because we don't want
-// ant task to had dependencies except jgit and ant
+
 public class BuildNumberExtractor {
     private static final String EMPTY_STRING = "";
 
+    /**
+     * @return extracted buildnumber object
+     * @throws IOException
+     */
     public static BuildNumber extract() throws IOException {
         // open repo
         FileRepository repo = new FileRepositoryBuilder().findGitDir().build();

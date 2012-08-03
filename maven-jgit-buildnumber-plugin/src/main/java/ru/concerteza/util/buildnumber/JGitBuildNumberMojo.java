@@ -86,11 +86,18 @@ public class JGitBuildNumberMojo extends AbstractMojo {
      */
     private MavenProject parentProject;
 
+    /**
+     * Extracts buildnumber fields from git repository and publishes them as maven properties.
+     * Executes only once per build. Return default (unknown) buildnumber fields on error.
+     *
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Properties props = project.getProperties();
         try {
-            // executes only one per build
+            // executes only once per build
             // http://www.sonatype.com/people/2009/05/how-to-make-a-plugin-run-once-during-a-build/
             if (executionRootDirectory.equals(baseDirectory)) {
                 // build started from this projects root

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.concerteza.buildnumber</groupId>
     <artifactId>jgit-buildnumber-parent</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <packaging>pom</packaging>
     <name>JGit Build Number Plugins For Maven And Ant</name>
 
@@ -53,6 +53,17 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <!-- use mvn javadoc:javadoc -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.8.1</version>
+                <configuration>
+                    <linksource>true</linksource>
+                    <quiet>true</quiet>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
-
 </project>
