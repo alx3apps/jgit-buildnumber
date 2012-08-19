@@ -2,6 +2,7 @@ package ru.concerteza.util.buildnumber;
 
 import org.apache.tools.ant.Project;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -23,6 +24,8 @@ public class JGitBuildNumberAntTask {
     }
 
     /**
+     * Reads {@code git.repositoryDirectory} property that should contain '.git' directory
+     * or be a subdirectory of such directory. If property wasn't set current work directory is used instead.
      * Extracted properties names:
      * <ul>
      *     <li>{@code git.revision}</li>
@@ -36,7 +39,9 @@ public class JGitBuildNumberAntTask {
      * @throws IOException
      */
     public void execute() throws IOException {
-        BuildNumber bn = BuildNumberExtractor.extract();
+        String repoDirString = project.getProperty("git.repositoryDirectory");
+        File repoDir = null != repoDirString ? new File(repoDirString) :  new File("");
+        BuildNumber bn = BuildNumberExtractor.extract(repoDir);
         project.setProperty("git.revision", bn.getRevision());
         project.setProperty("git.shortRevision", bn.getShortRevision());
         project.setProperty("git.branch", bn.getBranch());

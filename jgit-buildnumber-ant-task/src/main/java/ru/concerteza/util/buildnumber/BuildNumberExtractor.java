@@ -8,6 +8,7 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,18 +21,20 @@ import java.util.Map;
  * Date: 11/16/11
  * @see BuildNumber
  */
-
-
 public class BuildNumberExtractor {
     private static final String EMPTY_STRING = "";
 
     /**
+     * @param repoDirectory directory to start searching git root from, should contain '.git' directory
+     *                      or be a subdirectory of such directory
      * @return extracted buildnumber object
      * @throws IOException
      */
-    public static BuildNumber extract() throws IOException {
+    public static BuildNumber extract(File repoDirectory) throws IOException {
+        if(!(repoDirectory.exists() && repoDirectory.isDirectory())) throw new IOException(
+                "Invalid repository directory provided: " + repoDirectory.getAbsolutePath());
         // open repo
-        FileRepository repo = new FileRepositoryBuilder().findGitDir().build();
+        FileRepository repo = new FileRepositoryBuilder().findGitDir(repoDirectory).build();
         // extract HEAD revision
         ObjectId revisionObject = repo.resolve(Constants.HEAD);
         if (null == revisionObject) throw new IOException("Cannot read current revision from repository: " + repo);

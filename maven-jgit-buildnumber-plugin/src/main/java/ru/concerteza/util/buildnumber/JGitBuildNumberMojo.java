@@ -60,6 +60,13 @@ public class JGitBuildNumberMojo extends AbstractMojo {
      */
     private String javaScriptBuildnumberCallback = null;
     /**
+     * Directory to start searching git root from, should contain '.git' directory
+     * or be a subdirectory of such directory. '${project.basedir}' is used by default.
+     *
+     * @parameter expression="${repositoryDirectory}" default-value="${project.basedir}"
+     */
+    private File repositoryDirectory;
+    /**
      * @parameter expression="${project.basedir}"
      * @required
      * @readonly
@@ -101,7 +108,7 @@ public class JGitBuildNumberMojo extends AbstractMojo {
             // http://www.sonatype.com/people/2009/05/how-to-make-a-plugin-run-once-during-a-build/
             if (executionRootDirectory.equals(baseDirectory)) {
                 // build started from this projects root
-                BuildNumber bn = BuildNumberExtractor.extract();
+                BuildNumber bn = BuildNumberExtractor.extract(repositoryDirectory);
                 props.setProperty(revisionProperty, bn.getRevision());
                 props.setProperty(branchProperty, bn.getBranch());
                 props.setProperty(tagProperty, bn.getTag());
@@ -114,7 +121,15 @@ public class JGitBuildNumberMojo extends AbstractMojo {
             } else if("pom".equals(parentProject.getPackaging())) {
                 // build started from parent, we are in subproject, lets provide parent properties to our project
                 Properties parentProps = parentProject.getProperties();
-                props.setProperty(revisionProperty, parentProps.getProperty(revisionProperty));
+                String revision = parentProps.getProperty(revisionProperty);
+                if(null == revision) {
+                    // we are in subproject, but parent project wasn't build this time,
+                    // maybe build is running from parent with custom module list - 'pl' argument
+                    getLog().info("Cannot extract Git info, maybe custom build with 'pl' argument is running");
+                    fillPropsUnknown(props);
+                    return;
+                }
+                props.setProperty(revisionProperty, revision);
                 props.setProperty(branchProperty, parentProps.getProperty(branchProperty));
                 props.setProperty(tagProperty, parentProps.getProperty(tagProperty));
                 props.setProperty(commitsCountProperty, parentProps.getProperty(commitsCountProperty));

@@ -3,7 +3,7 @@ Git buildnumber plugin for Maven and Ant based on JGit
 
 Allows to get git buildnumbers, while building java projects, in pure Java without Git command-line tool.
 
-Note: maven already have ubiquitous [buildnumber-maven-plugin](http://mojo.codehaus.org/buildnumber-maven-plugin/) , this project is NIH substitute for it with Git support only.
+Note: maven already has ubiquitous [buildnumber-maven-plugin](http://mojo.codehaus.org/buildnumber-maven-plugin/) , this project is NIH substitute for it with Git support only.
 
 Build number
 ------------
@@ -147,6 +147,8 @@ If JS snippet failed to execute, it won't break build process, Rhino error will 
  * `tagProperty`, default: `git.tag`
  * `commitsCountProperty`, default: `git.commitsCount`
  * `buildnumberProperty`, default: `git.buildnumber`
+ * `repositoryDirectory` -  directory to start searching git root from, should contain '.git' directory
+ or be a subdirectory of such directory, deafault: `${project.basedir}`
 
 Usage in Ant
 ------------
@@ -154,7 +156,10 @@ Usage in Ant
 To use buildnumber ant task you need this jars on your classpath:
 
  - `jgit-buildnumber-ant-task-1.2.1.jar`
- - `org.eclipse.jgit-1.3.0.201202151440-r.jar`
+ - `org.eclipse.jgit-2.0.0.201206130900-r.jar`
+
+Project directory that contains `.git` directory may be provided with `git.repositoryDirectory` property.
+Curent work directory is used by defuault.
 
 Extracted properties are put into:
 
