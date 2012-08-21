@@ -68,9 +68,9 @@ public class BuildNumberExtractor {
         Map<String, Ref> refMap = repo.getTags();
         Map<String, String> res = new HashMap<String, String>(refMap.size());
         for (Map.Entry<String, Ref> en : refMap.entrySet()) {
-            String sha1 = en.getValue().getObjectId().name();
+            String sha1 = extractPeeledSha1(repo, en.getValue());
             String existed = res.get(sha1);
-            String value;
+            final String value;
             if (null == existed) {
                 value = en.getKey();
             } else {
@@ -79,6 +79,13 @@ public class BuildNumberExtractor {
             res.put(sha1, value);
         }
         return res;
+    }
+
+    // search for sha1 corresponding to annotated tag
+    private static String extractPeeledSha1(FileRepository repo, Ref ref) {
+        Ref peeled = repo.peel(ref);
+        ObjectId oid = peeled.getPeeledObjectId();
+        return null != oid ? oid.name() : peeled.getObjectId().name();
     }
 
     // takes about 1 sec to count 69939 in intellijidea repo

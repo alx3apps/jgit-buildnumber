@@ -30,7 +30,8 @@ This plugin will extract parameters above and expose them as Maven or Ant proper
 It does __NOT__ use Git CLI commands above, it uses pure java [JGit](http://www.jgit.org/) API instead.
 
 *Note: result properties won't coinside exactly with output of git CLI commands above,
-there are differences in not taking into account checkouted tag or not, and commits are counted form HEAD to root without branches*
+there are differences that are not taken into consideration - checkouted tag or not, all tags returned instead of latest,
+commits are counted form HEAD to root without branches*
 
 Plugin building
 ---------------
@@ -57,7 +58,7 @@ Plugin config:
     <plugin>
         <groupId>ru.concerteza.buildnumber</groupId>
         <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.2.1</version>
+        <version>1.2.4</version>
         <executions>
             <execution>
                 <id>git-buildnumber</id>
@@ -117,7 +118,7 @@ Configuration example:
     <plugin>
         <groupId>ru.concerteza.buildnumber</groupId>
         <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.2.1</version>
+        <version>1.2.4</version>
         <executions>
             <execution>
                 <id>git-buildnumber</id>
