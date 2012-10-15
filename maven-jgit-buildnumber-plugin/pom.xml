@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>ru.concerteza.buildnumber</groupId>
@@ -10,7 +11,8 @@
     <packaging>maven-plugin</packaging>
     <name>Maven JGit Build Number Plugin</name>
 
-    <description>Maven plugin, extracts buildnumbers from project's Git repository without Git command line tool</description>
+    <description>Maven plugin, extracts buildnumbers from project's Git repository without Git command line tool
+    </description>
     <url>https://github.com/alx3apps/jgit-buildnumber</url>
     <licenses>
         <license>
@@ -21,8 +23,8 @@
     <scm>
         <url>https://github.com/alx3apps/jgit-buildnumber</url>
         <connection>scm:git:https://github.com/alx3apps/jgit-buildnumber.git</connection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
     <developers>
         <developer>
             <name>Alex Kasko (alx3apps)</name>
@@ -64,5 +66,15 @@
             </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.1</version>
+            </plugin>
+        </plugins>
+    </reporting>
 
 </project>

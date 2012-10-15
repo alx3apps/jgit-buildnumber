@@ -5,14 +5,8 @@ Allows to get git buildnumbers, while building java projects, in pure Java witho
 
 Note: Maven already has ubiquitous [buildnumber-maven-plugin](http://mojo.codehaus.org/buildnumber-maven-plugin/) , this project is NIH substitution for it with Git support only.
 
-Plugin added to [Maven central](http://repo1.maven.org/maven2/ru/concerteza/buildnumber/maven-jgit-buildnumber-plugin/1.2.5/):
-
-    <plugin>
-        <groupId>ru.concerteza.buildnumber</groupId>
-        <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.2.5</version>
-        ...
-    </plugin>
+Plugin was added to [Maven central](http://repo1.maven.org/maven2/ru/concerteza/buildnumber/maven-jgit-buildnumber-plugin/).
+Maven-generated site is available [here](http://alx3apps.github.com/jgit-buildnumber).
 
 Build number
 ------------
@@ -42,15 +36,6 @@ It does __NOT__ use Git CLI commands above, it uses pure java [JGit](http://www.
 there are differences that are not taken into consideration - checkouted tag or not, all tags returned instead of latest,
 commits are counted form HEAD to root without branches*
 
-Plugin building
----------------
-
-Use
-
-    mvn clean install
-
-to build maven plugin and ant task jars.
-
 Usage in Maven 3
 ----------------
 
@@ -58,8 +43,7 @@ Note: this plugin accesses Git repo only once during multi-module build.
 
 ###Store raw buildnumber parts in MANIFEST.MF file
 
-In this case extracted buildnumber parts are stored in manifest as is, read from there on startup ([example](https://github.com/alx3apps/ctz-utils/blob/master/src/main/java/ru/concerteza/util/version/CtzVersionUtils.java))
-and composed into buildnumber.
+In this case extracted buildnumber parts are stored in manifest as is, and may be read from there on startup and composed into buildnumber.
 
 Plugin config:
 
@@ -67,7 +51,7 @@ Plugin config:
     <plugin>
         <groupId>ru.concerteza.buildnumber</groupId>
         <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.2.5</version>
+        <version>1.2.6</version>
         <executions>
             <execution>
                 <id>git-buildnumber</id>
@@ -117,7 +101,7 @@ Results exmple (from MANIFEST.MF):
 Plugin may be configured to produce ready-to-use buildnumber into `git.buildnumber` property.
 By default buildnumber created as `<tag or branch>.<commitsCount>.<shortRevision>`.
 
-Plugin also support custom buildnumber composition using JavaScript. This feature were added by [plevart](https://github.com/plevart).
+Plugin also support custom buildnumber composition using JavaScript. This feature was added by [plevart](https://github.com/plevart).
 
 JS snippet can be provided to `javaScriptBuildnumberCallback` configuration property. Snippet will be executed
 by [Rhino JS engine](http://www.mozilla.org/rhino/) included with JDK6.
@@ -127,7 +111,7 @@ Configuration example:
     <plugin>
         <groupId>ru.concerteza.buildnumber</groupId>
         <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.2.5</version>
+        <version>1.2.6</version>
         <executions>
             <execution>
                 <id>git-buildnumber</id>
@@ -165,7 +149,7 @@ Usage in Ant
 
 To use buildnumber ant task you need this jars on your classpath:
 
- - `jgit-buildnumber-ant-task-1.2.5.jar`
+ - `jgit-buildnumber-ant-task-1.2.6.jar`
  - `org.eclipse.jgit-2.0.0.201206130900-r.jar`
 
 Project directory that contains `.git` directory may be provided with `git.repositoryDirectory` property.
@@ -202,6 +186,13 @@ If you want to customize it, you can use Ant [Script task](http://ant.apache.org
             project.setProperty("git.buildnumber", buildnumber)
         </script>
     </target>
+
+Common errors
+-------------
+
+This exceptions will be reported by JGit if provided `repositoryDirectory` directory doesn't contain Git repository.
+
+    java.lang.IllegalArgumentException: One of setGitDir or setWorkTree must be called
 
 License information
 -------------------

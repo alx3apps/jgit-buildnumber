@@ -33,8 +33,9 @@ public class BuildNumberExtractor {
     public static BuildNumber extract(File repoDirectory) throws IOException {
         if(!(repoDirectory.exists() && repoDirectory.isDirectory())) throw new IOException(
                 "Invalid repository directory provided: " + repoDirectory.getAbsolutePath());
-        // open repo
-        FileRepository repo = new FileRepositoryBuilder().findGitDir(repoDirectory).build();
+        // open repo, jgit has some problems with not canonical paths
+        File canonicalRepo = repoDirectory.getCanonicalFile();
+        FileRepository repo = new FileRepositoryBuilder().findGitDir(canonicalRepo).build();
         // extract HEAD revision
         ObjectId revisionObject = repo.resolve(Constants.HEAD);
         if (null == revisionObject) throw new IOException("Cannot read current revision from repository: " + repo);
