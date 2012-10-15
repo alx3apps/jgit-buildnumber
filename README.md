@@ -3,7 +3,16 @@ Git buildnumber plugin for Maven and Ant based on JGit
 
 Allows to get git buildnumbers, while building java projects, in pure Java without Git command-line tool.
 
-Note: maven already has ubiquitous [buildnumber-maven-plugin](http://mojo.codehaus.org/buildnumber-maven-plugin/) , this project is NIH substitute for it with Git support only.
+Note: Maven already has ubiquitous [buildnumber-maven-plugin](http://mojo.codehaus.org/buildnumber-maven-plugin/) , this project is NIH substitution for it with Git support only.
+
+Plugin added to [Maven central](http://repo1.maven.org/maven2/ru/concerteza/buildnumber/maven-jgit-buildnumber-plugin/1.2.5/):
+
+    <plugin>
+        <groupId>ru.concerteza.buildnumber</groupId>
+        <artifactId>maven-jgit-buildnumber-plugin</artifactId>
+        <version>1.2.5</version>
+        ...
+    </plugin>
 
 Build number
 ------------
@@ -58,7 +67,7 @@ Plugin config:
     <plugin>
         <groupId>ru.concerteza.buildnumber</groupId>
         <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.2.4</version>
+        <version>1.2.5</version>
         <executions>
             <execution>
                 <id>git-buildnumber</id>
@@ -118,7 +127,7 @@ Configuration example:
     <plugin>
         <groupId>ru.concerteza.buildnumber</groupId>
         <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.2.4</version>
+        <version>1.2.5</version>
         <executions>
             <execution>
                 <id>git-buildnumber</id>
@@ -156,7 +165,7 @@ Usage in Ant
 
 To use buildnumber ant task you need this jars on your classpath:
 
- - `jgit-buildnumber-ant-task-1.2.1.jar`
+ - `jgit-buildnumber-ant-task-1.2.5.jar`
  - `org.eclipse.jgit-2.0.0.201206130900-r.jar`
 
 Project directory that contains `.git` directory may be provided with `git.repositoryDirectory` property.
