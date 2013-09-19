@@ -28,9 +28,17 @@
   </scm>
     <developers>
         <developer>
-            <name>Alex Kasko (alx3apps)</name>
-            <email>alx3apps@gmail.com</email>
+            <name>Alex Kasko</name>
+            <email>alex.kasko.mail@gmail.com</email>
             <url>http://alexkasko.com</url>
+        </developer>
+        <developer>
+            <name>Peter Levart</name>
+            <url>https://github.com/plevart</url>
+        </developer>
+        <developer>
+            <name>Brad Szabo</name>
+            <url>https://github.com/bradszabo</url>
         </developer>
     </developers>
 

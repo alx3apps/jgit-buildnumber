@@ -60,6 +60,9 @@ public class JGitBuildNumberMojo extends AbstractMojo {
      */
     private String javaScriptBuildnumberCallback = null;
     /**
+     * Setting this parameter to 'false' allows to execute plugin in every
+     * submodule, not only in root one.
+     *
      * @parameter expression="${runOnlyAtExecutionRoot}" default-value="true"
      */
     private boolean runOnlyAtExecutionRoot;

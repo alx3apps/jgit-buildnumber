@@ -51,7 +51,7 @@ Plugin config:
     <plugin>
         <groupId>ru.concerteza.buildnumber</groupId>
         <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.2.6</version>
+        <version>1.2.7</version>
         <executions>
             <execution>
                 <id>git-buildnumber</id>
@@ -143,6 +143,9 @@ If JS snippet failed to execute, it won't break build process, Rhino error will 
  * `buildnumberProperty`, default: `git.buildnumber`
  * `repositoryDirectory` -  directory to start searching git root from, should contain '.git' directory
  or be a subdirectory of such directory, deafault: `${project.basedir}`
+ * `runOnlyAtExecutionRoot`: setting this parameter to 'false' allows to execute plugin
+ in every submodule, not only in root one. Default: `true`.
+ This feature was added by [bradszabo](https://github.com/bradszabo).
 
 Usage in Ant
 ------------
@@ -197,4 +200,4 @@ This exceptions will be reported by JGit if provided `repositoryDirectory` direc
 License information
 -------------------
 
-You can use any code from this project under terms of [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+This project is released under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
