@@ -60,6 +60,10 @@ public class JGitBuildNumberMojo extends AbstractMojo {
      */
     private String javaScriptBuildnumberCallback = null;
     /**
+     * @parameter expression="${runOnlyAtExecutionRoot}" default-value="true"
+     */
+    private boolean runOnlyAtExecutionRoot;
+    /**
      * Directory to start searching git root from, should contain '.git' directory
      * or be a subdirectory of such directory. '${project.basedir}' is used by default.
      *
@@ -106,7 +110,7 @@ public class JGitBuildNumberMojo extends AbstractMojo {
         try {
             // executes only once per build
             // http://www.sonatype.com/people/2009/05/how-to-make-a-plugin-run-once-during-a-build/
-            if (executionRootDirectory.equals(baseDirectory)) {
+            if (executionRootDirectory.equals(baseDirectory) || !runOnlyAtExecutionRoot) {
                 // build started from this projects root
                 BuildNumber bn = BuildNumberExtractor.extract(repositoryDirectory);
                 props.setProperty(revisionProperty, bn.getRevision());
