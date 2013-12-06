@@ -27,12 +27,12 @@ __Globally__ __unique__ __id__: commit sha1
 
 __Build__ __incremental__ __id__: commits count in this branch
 
-    git rev-list --all | wc -l
+    git rev-list HEAD | wc -l
 
 This plugin will extract parameters above and expose them as Maven or Ant properties.
 It does __NOT__ use Git CLI commands above, it uses pure java [JGit](http://www.jgit.org/) API instead.
 
-*Note: result properties won't coinside exactly with output of git CLI commands above,
+*Note: result properties won't coincide exactly with output of git CLI commands above,
 there are differences that are not taken into consideration - checkouted tag or not, all tags returned instead of latest,
 commits are counted form HEAD to root without branches*
 
