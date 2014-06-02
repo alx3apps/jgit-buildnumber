@@ -40,7 +40,7 @@ public class JGitBuildNumberAntTask {
      */
     public void execute() throws IOException {
         String repoDirString = project.getProperty("git.repositoryDirectory");
-        File repoDir = null != repoDirString ? new File(repoDirString) :  new File("");
+        File repoDir = null != repoDirString ? new File(repoDirString) :  new File(".");
         BuildNumber bn = BuildNumberExtractor.extract(repoDir);
         project.setProperty("git.revision", bn.getRevision());
         project.setProperty("git.shortRevision", bn.getShortRevision());
