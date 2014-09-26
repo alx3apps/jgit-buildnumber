@@ -42,6 +42,12 @@ public class JGitBuildNumberMojo extends AbstractMojo {
      */
     private String tagProperty = "git.tag";
     /**
+     * Parent property name
+     *
+     * @parameter expression="${parentProperty}"
+     */
+    private String parentProperty = "git.parent";
+    /**
      * Commits count property name
      *
      * @parameter expression="${commitsCountProperty}"
@@ -119,6 +125,7 @@ public class JGitBuildNumberMojo extends AbstractMojo {
                 props.setProperty(revisionProperty, bn.getRevision());
                 props.setProperty(branchProperty, bn.getBranch());
                 props.setProperty(tagProperty, bn.getTag());
+                props.setProperty(parentProperty, bn.getParent());
                 props.setProperty(commitsCountProperty, bn.getCommitsCountAsString());
                 // create composite buildnumber
                 String composite = createBuildnumber(bn);
@@ -139,6 +146,7 @@ public class JGitBuildNumberMojo extends AbstractMojo {
                 props.setProperty(revisionProperty, revision);
                 props.setProperty(branchProperty, parentProps.getProperty(branchProperty));
                 props.setProperty(tagProperty, parentProps.getProperty(tagProperty));
+                props.setProperty(parentProperty, parentProps.getProperty(parentProperty));
                 props.setProperty(commitsCountProperty, parentProps.getProperty(commitsCountProperty));
                 props.setProperty(buildnumberProperty, parentProps.getProperty(buildnumberProperty));
             } else {
@@ -156,6 +164,7 @@ public class JGitBuildNumberMojo extends AbstractMojo {
         props.setProperty(revisionProperty, "UNKNOWN_REVISION");
         props.setProperty(branchProperty, "UNKNOWN_BRANCH");
         props.setProperty(tagProperty, "UNKNOWN_TAG");
+        props.setProperty(parentProperty, "UNKNOWN_PARENT");
         props.setProperty(commitsCountProperty, "-1");
         props.setProperty(buildnumberProperty, "UNKNOWN_BUILDNUMBER");
     }
@@ -170,6 +179,7 @@ public class JGitBuildNumberMojo extends AbstractMojo {
         jsEngine.put("tag", bn.getTag());
         jsEngine.put("branch", bn.getBranch());
         jsEngine.put("revision", bn.getRevision());
+        jsEngine.put("parent", bn.getParent());
         jsEngine.put("shortRevision", bn.getShortRevision());
         jsEngine.put("commitsCount", bn.getCommitsCount());
         Object res = jsEngine.eval(javaScriptBuildnumberCallback);

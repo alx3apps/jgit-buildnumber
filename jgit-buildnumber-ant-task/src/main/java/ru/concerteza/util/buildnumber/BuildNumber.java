@@ -11,18 +11,21 @@ public class BuildNumber {
     private final String revision;
     private final String branch;
     private final String tag;
+    private final String parent;
     private final int commitsCount;
 
     /**
      * @param revision git revision
      * @param branch git branch name
      * @param tag git tag name or multiple names concatenated with ";"
+     * @param parent git revision or multiple revisions concatenated with ";"
      * @param commitsCount number of commits in current branch
      */
-    public BuildNumber(String revision, String branch, String tag, int commitsCount) {
+    public BuildNumber(String revision, String branch, String tag, String parent, int commitsCount) {
         this.revision = revision;
         this.branch = branch;
         this.tag = tag;
+        this.parent = parent;
         this.commitsCount = commitsCount;
     }
 
@@ -56,6 +59,14 @@ public class BuildNumber {
      */
     public String getTag() {
         return tag;
+    }
+
+    /**
+     * @return parent revision, or multiple revisions concatenated with ";", corresponding
+     * git command {@code git log --pretty=%P -n 1 HEAD} (output is different, git separates with spaces )
+     */
+    public String getParent() {
+        return parent;
     }
 
     //
@@ -96,6 +107,7 @@ public class BuildNumber {
         sb.append("{revision='").append(revision).append('\'');
         sb.append(", branch='").append(branch).append('\'');
         sb.append(", tag='").append(tag).append('\'');
+        sb.append(", parent='").append(parent).append('\'');
         sb.append(", commitsCount=").append(commitsCount);
         sb.append('}');
         return sb.toString();

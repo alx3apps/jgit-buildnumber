@@ -44,9 +44,11 @@ public class BuildNumberExtractor {
         String branch = readCurrentBranch(repo, revision);
         // extract current tag
         String tag = readCurrentTag(repo, revision);
+        // extract current parent
+        String parent = readCurrentParent(repo, revision);
         // count total commits
         int commitsCount = countCommits(repo, revisionObject);
-        return new BuildNumber(revision, branch, tag, commitsCount);
+        return new BuildNumber(revision, branch, tag, parent, commitsCount);
     }
 
     private static String readCurrentBranch(FileRepository repo, String revision) throws IOException {
@@ -62,6 +64,25 @@ public class BuildNumberExtractor {
         String tag = tagMap.get(revision);
         if (null == tag) return EMPTY_STRING;
         return tag;
+    }
+
+    private static String readCurrentParent(FileRepository repo, String revision) throws IOException {
+        ObjectId rev = repo.resolve(revision);
+        if (null == rev) return EMPTY_STRING;
+        RevCommit commit = new RevWalk(repo).parseCommit(rev);
+        RevCommit[] parents = commit.getParents();
+        if (null == parents || parents.length == 0) return EMPTY_STRING;
+
+        String parentsFormat = null;
+        for (RevCommit p : parents) {
+            String sha1 = p.getId().name();
+            if (null == parentsFormat) {
+                parentsFormat = sha1;
+            } else {
+                parentsFormat += ";" + sha1;
+            }
+        }
+        return parentsFormat;
     }
 
     // sha1 -> tag name
