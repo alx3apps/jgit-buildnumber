@@ -8,7 +8,7 @@
     </parent>
     <groupId>ru.concerteza.buildnumber</groupId>
     <artifactId>jgit-buildnumber-parent</artifactId>
-    <version>1.2.8-SNAPSHOT</version>
+    <version>1.2.8</version>
     <packaging>pom</packaging>
     <name>JGit Build Number Plugins For Maven And Ant</name>
 
@@ -24,7 +24,7 @@
         <url>https://github.com/alx3apps/jgit-buildnumber</url>
         <connection>scm:git:https://github.com/alx3apps/jgit-buildnumber.git</connection>
         <developerConnection>scm:git:https://github.com/alx3apps/jgit-buildnumber.git</developerConnection>
-      <tag>HEAD</tag>
+      <tag>1.2.8</tag>
   </scm>
     <developers>
         <developer>
