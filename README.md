@@ -51,7 +51,7 @@ Plugin config:
     <plugin>
         <groupId>ru.concerteza.buildnumber</groupId>
         <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.2.7</version>
+        <version>1.2.8</version>
         <executions>
             <execution>
                 <id>git-buildnumber</id>

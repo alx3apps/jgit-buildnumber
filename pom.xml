@@ -40,6 +40,14 @@
             <name>Brad Szabo</name>
             <url>https://github.com/bradszabo</url>
         </developer>
+        <developer>
+            <name>George Thomas</name>
+            <url>https://github.com/smoothreggae</url>
+        </developer>
+        <developer>
+            <name>Elliot Wolk</name>
+            <url>https://github.com/teleshoes</url>
+        </developer>
     </developers>
 
     <modules>
