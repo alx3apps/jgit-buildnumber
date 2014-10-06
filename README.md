@@ -1,4 +1,4 @@
-Git buildnumber plugin for Maven and Ant based on JGit
+Git buildnumber plugin for Maven, Gradle and Ant based on JGit
 ======================================================
 
 Allows to get git buildnumbers, while building java projects, in pure Java without Git command-line tool.
@@ -189,6 +189,83 @@ If you want to customize it, you can use Ant [Script task](http://ant.apache.org
             project.setProperty("git.buildnumber", buildnumber)
         </script>
     </target>
+
+Usage in Gradle
+----------------
+
+ - Add the plugin dependency in your build.gradle `classpath 'ru.concerteza.buildnumber:gradle-jgit-buildnumber-plugin:1.2.9-SNAPSHOT'`
+ - Apply the plugin in one of the following ways `apply plugin: 'gradle-jgit-buildnumber-plugin'` or `apply plugin: ru.concerteza.util.buildnumber.plugin.JGitBuildNumberPlugin`
+ - Execute the jGitBuildnumber_ExtractBuildnumber task `tasks.jGitBuildnumber_ExtractBuildnumber.execute()`
+ 
+ Extracted properties are put into:
+ 
+  - `project.gitTag`
+  - `project.gitBranch`
+  - `project.gitRevision`
+  - `project.gitBuildnumber`
+  - `project.gitCommitsCount`
+  - `project.gitParent`
+  
+  Example setup in build.gradle:
+
+    ```
+    buildscript {
+      repositories{  
+         mavenLocal()  
+      }  
+      dependencies {  
+         classpath 'ru.concerteza.buildnumber:gradle-jgit-buildnumber-plugin:1.2.9-SNAPSHOT'  
+      }  
+    }  
+    apply plugin: 'gradle-jgit-buildnumber-plugin'  
+    ```
+    
+  The default working directory in the plugin is "." i.e this directory, if you wish to set a custom directory then the following should be added to your build.gradle
+   
+    ```
+    task jGitBuildnumber_ExtractBuildnumber() {
+       dir = projectDir;
+    }
+    ```
+        
+  projectDir is just an example.
+    
+  Example usage:
+  
+    ```
+    jar() {
+        manifest {
+            attributes(
+                    'Main-Class': mainClassName,
+                    'Implementation-Title': project.name,
+                    'Implementation-Version': project.gitRevision,
+                    'Specification-Version': project.gitCommitsCount,
+                    'X-Git-Branch': project.gitBranch,
+                    'X-Git-Tag': project.gitTag,
+                    'Version' : project.gitCommitsCount,
+                    'Branch' : project.gitBranch
+            )
+        }
+    }  
+    ```
+    
+  Results example (from MANIFEST.MF):
+    ```
+    Manifest-Version: 1.0
+    Main-Class: SearchService.application.SearchServiceMain
+    Implementation-Title: SearchService
+    Implementation-Vendor: 
+    Implementation-Version: 3b03c4d3531c66648c4fe7fcd7f53b3e9f64e519
+    Specification-Version: 82
+    X-Git-Branch: master
+    X-Git-Tag: 
+    Version: 82
+    Branch: master
+    ```
+    
+###Ready to use buildnumber
+  
+  Default buildnumber in form `<tag or branch>.<commitsCount>.<shortRevision>` will be put into property `project.gitBuildnumber`.
 
 Common errors
 -------------
