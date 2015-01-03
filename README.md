@@ -51,7 +51,7 @@ Plugin config:
     <plugin>
         <groupId>ru.concerteza.buildnumber</groupId>
         <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.2.8</version>
+        <version>1.2.9</version>
         <executions>
             <execution>
                 <id>git-buildnumber</id>
@@ -111,7 +111,7 @@ Configuration example:
     <plugin>
         <groupId>ru.concerteza.buildnumber</groupId>
         <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.2.6</version>
+        <version>1.2.9</version>
         <executions>
             <execution>
                 <id>git-buildnumber</id>
@@ -152,7 +152,7 @@ Usage in Ant
 
 To use buildnumber ant task you need this jars on your classpath:
 
- - `jgit-buildnumber-ant-task-1.2.6.jar`
+ - `jgit-buildnumber-ant-task-1.2.9.jar`
  - `org.eclipse.jgit-2.0.0.201206130900-r.jar`
 
 Project directory that contains `.git` directory may be provided with `git.repositoryDirectory` property.
