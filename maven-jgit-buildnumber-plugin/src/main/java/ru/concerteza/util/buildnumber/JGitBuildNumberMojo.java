@@ -30,6 +30,13 @@ public class JGitBuildNumberMojo extends AbstractMojo {
      */
     private String revisionProperty = "git.revision";
     /**
+     * Short revision property name
+     *
+     * @parameter expression="${shortRevisionProperty}"
+     */
+    private String shortRevisionProperty = "git.shortRevision";
+
+    /**
      * Branch property name
      *
      * @parameter expression="${branchProperty}"
@@ -123,6 +130,7 @@ public class JGitBuildNumberMojo extends AbstractMojo {
                 // build started from this projects root
                 BuildNumber bn = BuildNumberExtractor.extract(repositoryDirectory);
                 props.setProperty(revisionProperty, bn.getRevision());
+                props.setProperty(shortRevisionProperty, bn.getShortRevision());
                 props.setProperty(branchProperty, bn.getBranch());
                 props.setProperty(tagProperty, bn.getTag());
                 props.setProperty(parentProperty, bn.getParent());
@@ -144,6 +152,7 @@ public class JGitBuildNumberMojo extends AbstractMojo {
                     return;
                 }
                 props.setProperty(revisionProperty, revision);
+                props.setProperty(shortRevisionProperty, parentProps.getProperty(shortRevisionProperty));
                 props.setProperty(branchProperty, parentProps.getProperty(branchProperty));
                 props.setProperty(tagProperty, parentProps.getProperty(tagProperty));
                 props.setProperty(parentProperty, parentProps.getProperty(parentProperty));
@@ -162,6 +171,7 @@ public class JGitBuildNumberMojo extends AbstractMojo {
 
     private void fillPropsUnknown(Properties props) {
         props.setProperty(revisionProperty, "UNKNOWN_REVISION");
+        props.setProperty(shortRevisionProperty, "UNKNOWN_REVISION");
         props.setProperty(branchProperty, "UNKNOWN_BRANCH");
         props.setProperty(tagProperty, "UNKNOWN_TAG");
         props.setProperty(parentProperty, "UNKNOWN_PARENT");
