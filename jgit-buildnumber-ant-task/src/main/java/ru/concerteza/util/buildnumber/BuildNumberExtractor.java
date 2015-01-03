@@ -36,19 +36,23 @@ public class BuildNumberExtractor {
         // open repo, jgit has some problems with not canonical paths
         File canonicalRepo = repoDirectory.getCanonicalFile();
         FileRepository repo = new FileRepositoryBuilder().findGitDir(canonicalRepo).build();
-        // extract HEAD revision
-        ObjectId revisionObject = repo.resolve(Constants.HEAD);
-        if (null == revisionObject) throw new IOException("Cannot read current revision from repository: " + repo);
-        String revision = revisionObject.name();
-        // extract current branch
-        String branch = readCurrentBranch(repo, revision);
-        // extract current tag
-        String tag = readCurrentTag(repo, revision);
-        // extract current parent
-        String parent = readCurrentParent(repo, revision);
-        // count total commits
-        int commitsCount = countCommits(repo, revisionObject);
-        return new BuildNumber(revision, branch, tag, parent, commitsCount);
+        try {
+            // extract HEAD revision
+            ObjectId revisionObject = repo.resolve(Constants.HEAD);
+            if (null == revisionObject) throw new IOException("Cannot read current revision from repository: " + repo);
+            String revision = revisionObject.name();
+            // extract current branch
+            String branch = readCurrentBranch(repo, revision);
+            // extract current tag
+            String tag = readCurrentTag(repo, revision);
+            // extract current parent
+            String parent = readCurrentParent(repo, revision);
+            // count total commits
+            int commitsCount = countCommits(repo, revisionObject);
+            return new BuildNumber(revision, branch, tag, parent, commitsCount);
+        } finally {
+            repo.close();
+        }
     }
 
     private static String readCurrentBranch(FileRepository repo, String revision) throws IOException {
@@ -69,10 +73,11 @@ public class BuildNumberExtractor {
     private static String readCurrentParent(FileRepository repo, String revision) throws IOException {
         ObjectId rev = repo.resolve(revision);
         if (null == rev) return EMPTY_STRING;
-        RevCommit commit = new RevWalk(repo).parseCommit(rev);
+        RevWalk rw = new RevWalk(repo);
+        RevCommit commit = rw.parseCommit(rev);
         RevCommit[] parents = commit.getParents();
         if (null == parents || parents.length == 0) return EMPTY_STRING;
-
+        rw.dispose();
         String parentsFormat = null;
         for (RevCommit p : parents) {
             String sha1 = p.getId().name();
@@ -118,6 +123,7 @@ public class BuildNumberExtractor {
         walk.markStart(head);
         int res = 0;
         for (RevCommit commit : walk) res += 1;
+        walk.dispose();
         return res;
     }
 }
