@@ -2,6 +2,7 @@ package ru.concerteza.util.buildnumber;
 
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -10,6 +11,9 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,7 +53,9 @@ public class BuildNumberExtractor {
             String parent = readCurrentParent(repo, revision);
             // count total commits
             int commitsCount = countCommits(repo, revisionObject);
-            return new BuildNumber(revision, branch, tag, parent, commitsCount);
+			// extract date of current commit
+			String commitDate = readCurrentCommitDate(repo, revision);
+            return new BuildNumber(revision, branch, tag, parent, commitsCount, commitDate);
         } finally {
             repo.close();
         }
@@ -89,6 +95,17 @@ public class BuildNumberExtractor {
         }
         return parentsFormat;
     }
+
+	private static String readCurrentCommitDate(FileRepository repo, String revision) throws IOException {
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		ObjectId rev = repo.resolve(revision);
+		if (null == rev) return EMPTY_STRING;
+		RevWalk rw = new RevWalk(repo);
+		RevCommit commit = rw.parseCommit(rev);
+		PersonIdent author = commit.getAuthorIdent();
+		Date commitDate = author.getWhen();
+		return df.format(commitDate);
+	}
 
     // sha1 -> tag name
     private static Map<String, String> loadTagsMap(FileRepository repo) {
