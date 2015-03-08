@@ -53,6 +53,7 @@
     <modules>
         <module>maven-jgit-buildnumber-plugin</module>
         <module>jgit-buildnumber-ant-task</module>
+        <module>gradle-jgit-buildnumber-plugin</module>
     </modules>
 
     <properties>
