@@ -11,9 +11,12 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+
 import java.io.File;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -66,7 +69,7 @@ public class JGitBuildNumberMojo extends AbstractMojo {
      * @parameter expression="${buildnumberProperty}"
      */
     private String buildnumberProperty = "git.buildnumber";
-	/**
+    /**
      * commitDate property name
      *
      * @parameter expression="${commitDateProperty}"
@@ -141,7 +144,7 @@ public class JGitBuildNumberMojo extends AbstractMojo {
                 props.setProperty(tagProperty, bn.getTag());
                 props.setProperty(parentProperty, bn.getParent());
                 props.setProperty(commitsCountProperty, bn.getCommitsCountAsString());
-				props.setProperty(commitDateProperty, bn.getCommitDate());
+                props.setProperty(commitDateProperty, bn.getCommitDate());
                 // create composite buildnumber
                 String composite = createBuildnumber(bn);
                 props.setProperty(buildnumberProperty, composite);
@@ -165,7 +168,7 @@ public class JGitBuildNumberMojo extends AbstractMojo {
                 props.setProperty(parentProperty, parentProps.getProperty(parentProperty));
                 props.setProperty(commitsCountProperty, parentProps.getProperty(commitsCountProperty));
                 props.setProperty(buildnumberProperty, parentProps.getProperty(buildnumberProperty));
-				props.setProperty(commitDateProperty, parentProps.getProperty(commitDateProperty));
+                props.setProperty(commitDateProperty, parentProps.getProperty(commitDateProperty));
             } else {
                 // should not happen
                 getLog().warn("Cannot extract JGit version: something wrong with build process, we're not in parent, not in subproject!");
@@ -185,7 +188,7 @@ public class JGitBuildNumberMojo extends AbstractMojo {
         props.setProperty(parentProperty, "UNKNOWN_PARENT");
         props.setProperty(commitsCountProperty, "-1");
         props.setProperty(buildnumberProperty, "UNKNOWN_BUILDNUMBER");
-		props.setProperty(commitDateProperty, "UNKNOWN_COMMIT_DATE");
+        props.setProperty(commitDateProperty, "UNKNOWN_COMMIT_DATE");
     }
 
     private String createBuildnumber(BuildNumber bn) throws ScriptException {
@@ -194,16 +197,44 @@ public class JGitBuildNumberMojo extends AbstractMojo {
     }
 
     private String buildnumberFromJS(BuildNumber bn) throws ScriptException {
-        ScriptEngine jsEngine = new ScriptEngineManager().getEngineByName("JavaScript");
-        jsEngine.put("tag", bn.getTag());
-        jsEngine.put("branch", bn.getBranch());
-        jsEngine.put("revision", bn.getRevision());
-        jsEngine.put("parent", bn.getParent());
-        jsEngine.put("shortRevision", bn.getShortRevision());
-        jsEngine.put("commitsCount", bn.getCommitsCount());
-		jsEngine.put("commitDate", bn.getCommitDate());
-        Object res = jsEngine.eval(javaScriptBuildnumberCallback);
-        if(null == res) throw new IllegalStateException("JS buildnumber callback returns null");
-        return res.toString();
+        ScriptEngine jsEngine = getScriptEngine();
+        if (jsEngine != null) {
+            jsEngine.put("tag", bn.getTag());
+            jsEngine.put("branch", bn.getBranch());
+            jsEngine.put("revision", bn.getRevision());
+            jsEngine.put("parent", bn.getParent());
+            jsEngine.put("shortRevision", bn.getShortRevision());
+            jsEngine.put("commitsCount", bn.getCommitsCount());
+            jsEngine.put("commitDate", bn.getCommitDate());
+            Object res = jsEngine.eval(javaScriptBuildnumberCallback);
+            if(null == res) throw new IllegalStateException("JS buildnumber callback returns null");
+            return res.toString();
+        } else {
+            return "UNKNOWN_JS_BUILDNUMBER";
+        }
     }
+    
+    private ScriptEngine getScriptEngine() {
+        ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+        ScriptEngine result = scriptEngineManager.getEngineByName("nashorn");
+        if (result == null) {
+            result = scriptEngineManager.getEngineByName("rhino");
+        }
+        if (result == null) {
+            result = scriptEngineManager.getEngineByName("JavaScript");
+        }
+        if (result == null) {
+            result = scriptEngineManager.getEngineByExtension("js");
+        }
+        if (result == null) {
+            getLog().error("Failed to locate Javasript Engine (tried for: nashorn, rhino, JavaScript; suffices: js)");
+            List<ScriptEngineFactory> factories = scriptEngineManager.getEngineFactories();
+            getLog().error(String.format("Found %d ScriptEngineFactory instances.", factories.size()));
+            for (ScriptEngineFactory factory : factories) {
+                getLog().error(String.format("\tScriptEngineFactory: %s (version=%s)", factory.getEngineName(), factory.getEngineVersion()));
+            }
+        }
+        return result;
+    }
+    
 }
