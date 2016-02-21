@@ -1,0 +1,21 @@
+<lifecycleMappingMetadata>
+	<pluginExecutions>
+		<pluginExecution>
+			<pluginExecutionFilter>
+				<goals>
+					<goal>extract-buildnumber</goal>
+				</goals>
+			</pluginExecutionFilter>
+			<action>
+				<execute>
+                    <!-- 
+                        we seem to be fast enough for incremental builds, ~25ms on a Mac
+                        see log output for execution times 
+                    -->       
+					<runOnIncremental>true</runOnIncremental>
+					<runOnConfiguration>true</runOnConfiguration>
+				</execute>
+			</action>
+		</pluginExecution>
+	</pluginExecutions>
+</lifecycleMappingMetadata>
