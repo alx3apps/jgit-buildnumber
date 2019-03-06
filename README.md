@@ -156,7 +156,7 @@ To use buildnumber ant task you need this jars on your classpath:
  - `org.eclipse.jgit-2.0.0.201206130900-r.jar`
 
 Project directory that contains `.git` directory may be provided with `git.repositoryDirectory` property.
-Curent work directory is used by defuault.
+Curent work directory is used by default.
 
 Extracted properties are put into:
 
