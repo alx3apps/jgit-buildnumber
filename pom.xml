@@ -8,7 +8,7 @@
     </parent>
     <groupId>ru.concerteza.buildnumber</groupId>
     <artifactId>jgit-buildnumber-parent</artifactId>
-    <version>1.2.11-SNAPSHOT</version>
+    <version>1.2.12-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>JGit Build Number Plugins For Maven And Ant</name>
 
@@ -102,7 +102,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+            <!-- <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.8.1</version>
@@ -118,8 +118,8 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
+            </plugin> -->
+           <!--  <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>1.4</version>
@@ -135,7 +135,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
@@ -148,4 +148,29 @@
             </plugin>
         </plugins>
     </build>
+    
+     <repositories>
+        <repository> 
+            <id>local_repo</id>
+            <url>http://10.88.4.80:8081/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+       </repository>
+   </repositories>
+   <distributionManagement>
+       <repository>
+            <id>nexus-releases</id>
+            <name>Local Nexus Release Repository</name>
+            <url>http://10.88.4.80:8081/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+             <id>nexus-snapshots</id>
+            <name>Local Nexus Snapshot Repository</name>
+            <url>http://10.88.4.80:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+   </distributionManagement>
 </project>
