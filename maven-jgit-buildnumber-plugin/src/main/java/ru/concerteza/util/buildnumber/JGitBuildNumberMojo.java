@@ -1,5 +1,13 @@
 package ru.concerteza.util.buildnumber;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Properties;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
 /**
  * User: alexey
  * Date: 11/16/11
@@ -9,12 +17,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import java.io.File;
-import java.util.Properties;
 
 /**
  * Goal which creates build number.
@@ -148,6 +150,11 @@ public class JGitBuildNumberMojo extends AbstractMojo {
                 getLog().info("Git info extracted, revision: '" + bn.getShortRevision() + "', branch: '" + bn.getBranch() +
                         "', tag: '" + bn.getTag() + "', commitsCount: '" + bn.getCommitsCount() + "', commitDate: '" + bn.getCommitDate() + "', buildnumber: '" + composite + "'");
             } else if("pom".equals(parentProject.getPackaging())) {
+            	if (ifSeparatedModules()) {
+            		getLog().info("project:" + project.getName() + " has diff dir with parent");
+            		fillSeparateModuleInfo();
+            		return;
+            	}
                 // build started from parent, we are in subproject, lets provide parent properties to our project
                 Properties parentProps = parentProject.getProperties();
                 String revision = parentProps.getProperty(revisionProperty);
@@ -176,7 +183,43 @@ public class JGitBuildNumberMojo extends AbstractMojo {
             fillPropsUnknown(props);
         }
     }
-
+    /**
+     * 
+          *   检测子模块是否在父模块目录下
+     * @return
+     */
+    private boolean ifSeparatedModules() {
+    	if (parentProject == null || parentProject.getBasedir() == null) {
+    		getLog().warn("parentProject not exists");
+    		return false;
+    	}
+    	if (project == null || project.getBasedir() == null) {
+    		getLog().warn("project not valid null");
+    		return false;
+    	}
+    	String parentProjectDir = parentProject.getBasedir().getAbsolutePath();
+    	String projectParent = project.getBasedir().getParent();
+    	getLog().info("parentProjectDir:" + parentProjectDir + ", projectParent:" + projectParent);
+    	return !parentProjectDir.equals(projectParent);
+    }
+    
+    private void fillSeparateModuleInfo() throws ScriptException, IOException {
+    	Properties props = project.getProperties();
+    	BuildNumber bn = BuildNumberExtractor.extract(repositoryDirectory);
+        props.setProperty(revisionProperty, bn.getRevision());
+        props.setProperty(shortRevisionProperty, bn.getShortRevision());
+        props.setProperty(branchProperty, bn.getBranch());
+        props.setProperty(tagProperty, bn.getTag());
+        props.setProperty(parentProperty, bn.getParent());
+        props.setProperty(commitsCountProperty, bn.getCommitsCountAsString());
+        props.setProperty(commitDateProperty, bn.getCommitDate());
+        // create composite buildnumber
+        String composite = createBuildnumber(bn);
+        props.setProperty(buildnumberProperty, composite);
+        getLog().info("Git info extracted, revision: '" + bn.getShortRevision() + "', branch: '" + bn.getBranch() +
+                 "', tag: '" + bn.getTag() + "', commitsCount: '" + bn.getCommitsCount() + "', commitDate: '" + bn.getCommitDate() + "', buildnumber: '" + composite + "'");
+    }
+    
     private void fillPropsUnknown(Properties props) {
         props.setProperty(revisionProperty, "UNKNOWN_REVISION");
         props.setProperty(shortRevisionProperty, "UNKNOWN_REVISION");
